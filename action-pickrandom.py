@@ -33,11 +33,12 @@ class PickRandomBoardgame(object):
         try:
             self.config = SnipsConfigParser.read_configuration_file(CONFIG_INI)
         except Exception:
+            print("WHAT!")
             self.config = None
 
         # get authentication token
-        payload = { 'username': self.config.username, 'password': self.config.password }
-        resp = requests.post(self.config.backend_api + '/user/login', data=payload)
+        payload = { 'username': self.config.get("secret").get("username"), 'password': self.config.get("secret").get("password") }
+        resp = requests.post(self.config.get("global").get("backend_api") + '/user/login', data=payload)
 
         if not resp.ok:
             print("ERROR")
@@ -47,14 +48,11 @@ class PickRandomBoardgame(object):
         self.start_blocking()
 
     @staticmethod
-    def PickRandomBoardgameCallback(self,
-                                    hermes: Hermes,
-                                    intent_message: IntentMessage):
-
+    def PickRandomBoardgameCallback(hermes: Hermes, intent_message: IntentMessage):
         return hermes.publish_end_session(intent_message.session_id, "Ok")
 
     @staticmethod
-    def ElicitNumPlayersCallback(self,
+    def ElicitNumPlayersCallback(
                                 hermes: Hermes,
                                 intent_message: IntentMessage):
 
@@ -73,9 +71,7 @@ class PickRandomBoardgame(object):
     # register callback function to its intent and start listen to MQTT bus
     def start_blocking(self):
         with Hermes(MQTT_ADDR) as h:
-            h.subscribe_intent("hjwk:PickRandomBoardgame", self.PickRandomBoardgameCallback)
-            h.subscribe_intent("hjwk:ElicitNumPlayers", self.ElicitNumPlayersCallback)
-            h.loop_forever()
+            h.subscribe_intent("hjwk:PickRandomBoardgame", self.PickRandomBoardgameCallback).loop_forever()
 
 if __name__ == "__main__":
     PickRandomBoardgame()
