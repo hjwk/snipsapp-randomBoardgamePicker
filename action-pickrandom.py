@@ -28,6 +28,12 @@ required_slots = {
     "num_players": None
 }
 
+def extractSlot(slots, slot):
+    if (slots.slot):
+        return slots.slot.first().value
+    
+    return None
+
 class PickRandomBoardgame(object):
     """class used to wrap action code with mqtt connection
        please change the name refering to your application
@@ -51,7 +57,7 @@ class PickRandomBoardgame(object):
         if (intent_message.custom_data):
             available_slots = json.loads(intent_message.custom_data)
         
-        num_players_slot = intent_message.slots.num_players.first().value or available_slots["num_players"]
+        num_players_slot = extractSlot(intent_message.slots, "num_players") or available_slots["num_players"]
         available_slots["num_players"] = num_players_slot
 
         if not num_players_slot:
