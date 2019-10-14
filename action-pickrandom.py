@@ -54,17 +54,12 @@ class PickRandomBoardgame(object):
 
     @staticmethod
     def PickRandomBoardgameCallback(hermes: Hermes, intent_message: IntentMessage):
-        if (intent_message.custom_data):
-            available_slots = json.loads(intent_message.custom_data)
-        
-        num_players_slot = extractSlot(intent_message.slots, "num_players") or available_slots["num_players"]
-        available_slots["num_players"] = num_players_slot
+        num_players_slot = extractSlot(intent_message.slots, "players")
 
         if not num_players_slot:
             return hermes.publish_continue_session(intent_message.session_id,
                                                     required_slots_questions["num_players"],
-                                                    ["hjwk:ElicitNumPlayers"],
-                                                    custom_data=json.dumps(available_slots))
+                                                    ["hjwk:ElicitNumPlayers"])
         
         hermes.publish_end_session(intent_message.session_id, "Ok, laisse moi un instant...")
 
