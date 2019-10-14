@@ -48,10 +48,10 @@ class PickRandomBoardgame(object):
 
     @staticmethod
     def PickRandomBoardgameCallback(hermes: Hermes, intent_message: IntentMessage):
-        available_slots = json.loads(intent_message.custom_data)
+        if (intent_message.custom_data):
+            available_slots = json.loads(intent_message.custom_data)
         
         num_players_slot = intent_message.slots.num_players.first().value or available_slots["num_players"]
-
         available_slots["num_players"] = num_players_slot
 
         if not num_players_slot:
