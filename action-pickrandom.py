@@ -73,8 +73,8 @@ class PickRandomBoardgame(object):
     # register callback function to its intent and start listen to MQTT bus
     def start_blocking(self):
         with Hermes(MQTT_ADDR) as h:
-            h.subscribe_intent('PickRandomBoardgame', self.PickRandomBoardgameCallback)
-            h.subscribe_intent('ElicitNumPlayers', self.ElicitNumPlayersCallback)
+            h.subscribe_intent("hjwk:PickRandomBoardgame", self.PickRandomBoardgameCallback)
+            h.subscribe_intent("hjwk:ElicitNumPlayers", self.ElicitNumPlayersCallback)
             h.loop_forever()
 
 if __name__ == "__main__":
