@@ -35,9 +35,6 @@ class PickRandomBoardgame(object):
         except Exception:
             self.config = None
 
-        # start listening to MQTT
-        self.start_blocking()
-
         # get authentication token
         payload = { 'username': self.config.username, 'password': self.config.password }
         resp = requests.post(self.config.backend_api + '/user/login', data=payload)
@@ -47,19 +44,14 @@ class PickRandomBoardgame(object):
 
         self.token = resp.json()['token']
 
+        self.start_blocking()
+
     @staticmethod
     def PickRandomBoardgameCallback(self,
                                     hermes: Hermes,
                                     intent_message: IntentMessage):
 
-        print('Haha')
-
-        if not intent_message.slots['numPlayers']:
-            print('Continuing session')
-            hermes.publish_continue_session(intent_message.session_id, required_slots_questions["num_players"])
-        else:
-            hermes.publish_end_session(intent_message.session_id, "Ok")
-            print('I have everything I need')
+        return hermes.publish_end_session(intent_message.session_id, "Ok")
 
     @staticmethod
     def ElicitNumPlayersCallback(self,
