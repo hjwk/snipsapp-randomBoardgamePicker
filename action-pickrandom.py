@@ -48,7 +48,7 @@ class PickRandomBoardgame(object):
         self.start_blocking()
 
     def PickRandomBoardgameCallback(self, hermes: Hermes, intent_message: IntentMessage):
-        num_players_slot = self.extractSlot(intent_message.slots, "players")
+        num_players_slot = extractSlot(intent_message.slots, "players")
         if not num_players_slot:
             return hermes.publish_continue_session(intent_message.session_id,
                                                     required_slots_questions["num_players"],
@@ -67,7 +67,7 @@ class PickRandomBoardgame(object):
         # terminate the session before we perform the api call to bgc
         hermes.publish_end_session(intent_message.session_id, "D'accord, laisse moi réfléchir...")
         
-        num_players_slot = self.extractSlot(intent_message.slots, "players")
+        num_players_slot = extractSlot(intent_message.slots, "players")
         boardgames = self.apiHandler.getRandomBoardgames(num_players_slot)
         if len(boardgames) == 0:
             return hermes.publish_start_session_notification(intent_message.site_id, "Désolé mais vous n'avez pas de jeu qui se joue à {}".format(num_players_slot))
