@@ -24,9 +24,9 @@ required_slots_questions = {
 }
 
 def extractSlot(slots, slot):
-    if slots.slot:
-        return int(slots.slot.first().value)
-    
+    if slots[slot]:
+        return int(slots[slot].first().value)
+
     return None
 
 class PickRandomBoardgame(object):
