@@ -58,9 +58,9 @@ class PickRandomBoardgame(object):
 
         boardgames = self.apiHandler.getRandomBoardgames(num_players_slot)
         if len(boardgames) == 0:
-            return hermes.publish_start_session_notification(intent_message.site_id, "Désolé mais vous n'avez pas de jeu qui se joue à {}".format(num_players_slot))
+            return hermes.publish_start_session_notification(intent_message.site_id, "Désolé mais vous n'avez pas de jeu qui se joue à {}".format(num_players_slot), "")
 
-        hermes.publish_start_session_notification(intent_message.site_id, "Vous pourriez jouer à {}".format(boardgames[0]))
+        hermes.publish_start_session_notification(intent_message.site_id, "Vous pourriez jouer à {}".format(boardgames[0]), "")
 
     def ElicitNumPlayersCallback(self, hermes: Hermes, intent_message: IntentMessage):
 
@@ -70,9 +70,9 @@ class PickRandomBoardgame(object):
         num_players_slot = extractSlot(intent_message.slots, "players")
         boardgames = self.apiHandler.getRandomBoardgames(num_players_slot)
         if len(boardgames) == 0:
-            return hermes.publish_start_session_notification(intent_message.site_id, "Désolé mais vous n'avez pas de jeu qui se joue à {}".format(num_players_slot))
+            return hermes.publish_start_session_notification(intent_message.site_id, "Désolé mais vous n'avez pas de jeu qui se joue à {}".format(num_players_slot), "")
 
-        hermes.publish_start_session_notification(intent_message.site_id, "Que pensez-vous de {}".format(boardgames[0]))
+        hermes.publish_start_session_notification(intent_message.site_id, "Que pensez-vous de {}".format(boardgames[0]), "")
 
     # register callback function to its intent and start listen to MQTT bus
     def start_blocking(self):
