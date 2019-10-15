@@ -24,9 +24,9 @@ required_slots_questions = {
 }
 
 def extractSlot(slots, slot):
-    if slots[slot]:
-        return slots[slot].first().value
-
+    if slots.slot:
+        return int(slots.slot.first().value)
+    
     return None
 
 class PickRandomBoardgame(object):
@@ -53,26 +53,26 @@ class PickRandomBoardgame(object):
             return hermes.publish_continue_session(intent_message.session_id,
                                                     required_slots_questions["num_players"],
                                                     ["hjwk:ElicitNumPlayers"])
-
-        hermes.publish_end_session(intent_message.session_id, "Ok, laisse moi un instant...")
+        
+        hermes.publish_end_session(intent_message.session_id, "")
 
         boardgames = self.apiHandler.getRandomBoardgames(num_players_slot)
         if len(boardgames) == 0:
-            return hermes.publish_start_session_notification(intent_message.site_id, "Désolé mais vous n'avez pas de jeu qui se joue à {}".format(num_players_slot), "")
+            return hermes.publish_start_session_notification(intent_message.site_id, "Désolé mais vous n'avez pas de jeu qui se joue à {}".format(num_players_slot))
 
-        hermes.publish_start_session_notification(intent_message.site_id, "Vous pourriez jouer à {}".format(boardgames[0]), "")
+        hermes.publish_start_session_notification(intent_message.site_id, "Vous pourriez jouer à {}".format(boardgames[0]))
 
     def ElicitNumPlayersCallback(self, hermes: Hermes, intent_message: IntentMessage):
 
         # terminate the session before we perform the api call to bgc
-        hermes.publish_end_session(intent_message.session_id, "D'accord, laisse moi réfléchir...")
+        hermes.publish_end_session(intent_message.session_id, "")
         
         num_players_slot = extractSlot(intent_message.slots, "players")
         boardgames = self.apiHandler.getRandomBoardgames(num_players_slot)
         if len(boardgames) == 0:
-            return hermes.publish_start_session_notification(intent_message.site_id, "Désolé mais vous n'avez pas de jeu qui se joue à {}".format(num_players_slot), "")
+            return hermes.publish_start_session_notification(intent_message.site_id, "Désolé mais vous n'avez pas de jeu qui se joue à {}".format(num_players_slot))
 
-        hermes.publish_start_session_notification(intent_message.site_id, "Que pensez-vous de {}".format(boardgames[0]), "")
+        hermes.publish_start_session_notification(intent_message.site_id, "Que pensez-vous de {}".format(boardgames[0]))
 
     # register callback function to its intent and start listen to MQTT bus
     def start_blocking(self):
