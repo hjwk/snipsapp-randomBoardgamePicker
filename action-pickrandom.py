@@ -55,7 +55,7 @@ class PickRandomBoardgame(object):
             return hermes.publish_continue_session(intent_message.session_id,
                                                     required_slots_questions["num_players"],
                                                     ["hjwk:ElicitNumPlayers"])
-        
+
         num_boardgames_slot = extractSlot(intent_message.slots, "numberOfPropositions")
         numberOfBoardgames = num_boardgames_slot if num_boardgames_slot else self.numberOfBoardgames
 
@@ -65,13 +65,19 @@ class PickRandomBoardgame(object):
         if len(boardgames) == 0:
             return hermes.publish_start_session_notification(intent_message.site_id, "Désolé mais vous n'avez pas de jeu qui se joue à {}".format(num_players_slot), "")
 
-        hermes.publish_start_session_notification(intent_message.site_id, "Vous pourriez jouer à {}".format(boardgames[0]), "")
+        answer = "Vous pourriez jouer à "
+        for i in range(len(boardgames)):
+            answer += boardgames[i]
+            if i < len(boardgames) - 1:
+                answer += " ou à "
+
+        hermes.publish_start_session_notification(intent_message.site_id, answer, "")
 
     def ElicitNumPlayersCallback(self, hermes: Hermes, intent_message: IntentMessage):
 
         # terminate the session before we perform the api call to bgc
         hermes.publish_end_session(intent_message.session_id, "")
-        
+
         num_players_slot = extractSlot(intent_message.slots, "numberOfPlayers")
         boardgames = self.apiHandler.getRandomBoardgames(num_players_slot, self.numberOfBoardgames)
         if len(boardgames) == 0:
