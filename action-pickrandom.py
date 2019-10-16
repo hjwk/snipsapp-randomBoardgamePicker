@@ -74,7 +74,6 @@ class PickRandomBoardgame(object):
         hermes.publish_start_session_notification(intent_message.site_id, answer, "")
 
     def ElicitNumPlayersCallback(self, hermes: Hermes, intent_message: IntentMessage):
-
         # terminate the session before we perform the api call to bgc
         hermes.publish_end_session(intent_message.session_id, "")
 
@@ -83,13 +82,25 @@ class PickRandomBoardgame(object):
         if len(boardgames) == 0:
             return hermes.publish_start_session_notification(intent_message.site_id, "Vous n'avez pas de jeu qui se joue à {}".format(num_players_slot), "")
 
-        hermes.publish_start_session_notification(intent_message.site_id, "Que pensez-vous de {} ?".format(boardgames[0]), "")
+        answer = "Vous pourriez jouer à "
+        for i in range(len(boardgames)):
+            answer += boardgames[i]
+            if i < len(boardgames) - 1:
+                answer += " ou à, "
+
+        hermes.publish_start_session_notification(intent_message.site_id, answer, "")
+
+    def FavouriteBoardgame(self, hermes: Hermes, intent_message: IntentMessage):
+        hermes.publish_end_session(intent_message.session_id, "")
+        favouriteBoardgame = self.apiHandler.getMostPlayedBoardgame()
+        hermes.publish_start_session_notification(intent_message.site_id, "Votre jeu préféré est " + favouriteBoardgame, "")
 
     # register callback function to its intent and start listen to MQTT bus
     def start_blocking(self):
         with Hermes(MQTT_ADDR) as h:
             h.subscribe_intent("hjwk:PickRandomBoardgame", self.PickRandomBoardgameCallback)
             h.subscribe_intent('hjwk:ElicitNumPlayers', self.ElicitNumPlayersCallback)
+            h.subscribe_intent('hjwk:FavouriteBoardgame', self.FavouriteBoardgame)
             h.loop_forever()
 
 if __name__ == "__main__":
