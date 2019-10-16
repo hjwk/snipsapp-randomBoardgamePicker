@@ -24,7 +24,7 @@ class Api(object):
 
     def getUserId(self):
         url = self.backend_url + '/user/current'
-        user = requests.get(url,  headers={'Authentication': 'JWT ' + token})
+        user = requests.get(url,  headers={'Authentication': 'JWT ' + self.token})
 
         return user.json()["id"]
 
@@ -36,7 +36,7 @@ class Api(object):
                 print("Token no longer valid, refreshing")
                 self.token = self.getToken()
                 library = requests.get(url, headers={'Authentication': 'JWT ' + self.token})
-            
+
             self.boardgames = library.json()
 
     def getRandomBoardgames(self, numberOfPlayers, numberOfBoardgames):
@@ -50,13 +50,13 @@ class Api(object):
                 game['board_game']['max_players'] >= numberOfPlayers):
                 filteredGames.append(game)
 
-        options = random.sample(range(0, min(len(filteredGames), numberOfBoardgames), numberOfBoardgames)
+        options = random.sample(range(0, min(len(filteredGames), numberOfBoardgames)), numberOfBoardgames)
         return [ filteredGames[i]['board_game']['name'] for i in options ]
 
     def getMostPlayedBoardgame(self):
         # Get stats
         url = self.backend_url + '/user/' + str(self.userId) + '/stats'
-        stats = requests(url, headers={'Authentication': 'JWT ' + self.token})
-        
+        stats = requests.get(url, headers={'Authentication': 'JWT ' + self.token})
+
         if stats.ok:
             return stats.json()['most_played']['board_game']['name']
