@@ -20,7 +20,7 @@ MQTT_PORT = 1883
 MQTT_ADDR = "{}:{}".format(MQTT_IP_ADDR, str(MQTT_PORT))
 
 required_slots_questions = {
-    "num_players": "Ok, mais pour combien de joueurs ?",
+    "num_players": "Combien de joueurs ?",
 }
 
 def extractSlot(slots, slot):
@@ -63,13 +63,13 @@ class PickRandomBoardgame(object):
 
         boardgames = self.apiHandler.getRandomBoardgames(num_players_slot, numberOfBoardgames)
         if len(boardgames) == 0:
-            return hermes.publish_start_session_notification(intent_message.site_id, "Désolé mais vous n'avez pas de jeu qui se joue à {}".format(num_players_slot), "")
+            return hermes.publish_start_session_notification(intent_message.site_id, "Vous n'avez pas de jeu qui se joue à {}".format(num_players_slot), "")
 
         answer = "Vous pourriez jouer à "
         for i in range(len(boardgames)):
             answer += boardgames[i]
             if i < len(boardgames) - 1:
-                answer += " ou à "
+                answer += " ou à, "
 
         hermes.publish_start_session_notification(intent_message.site_id, answer, "")
 
@@ -81,7 +81,7 @@ class PickRandomBoardgame(object):
         num_players_slot = extractSlot(intent_message.slots, "numberOfPlayers")
         boardgames = self.apiHandler.getRandomBoardgames(num_players_slot, self.numberOfBoardgames)
         if len(boardgames) == 0:
-            return hermes.publish_start_session_notification(intent_message.site_id, "Désolé mais vous n'avez pas de jeu qui se joue à {}".format(num_players_slot), "")
+            return hermes.publish_start_session_notification(intent_message.site_id, "Vous n'avez pas de jeu qui se joue à {}".format(num_players_slot), "")
 
         hermes.publish_start_session_notification(intent_message.site_id, "Que pensez-vous de {} ?".format(boardgames[0]), "")
 
