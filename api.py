@@ -48,10 +48,15 @@ class Api(object):
         for game in self.boardgames:
             if (game['board_game']['min_players'] <= numberOfPlayers and
                 game['board_game']['max_players'] >= numberOfPlayers):
-                filteredGames.append(game)
+                filteredGames.append(game['board_game']['name'])
 
-        options = random.sample(range(0, min(len(filteredGames), numberOfBoardgames)), numberOfBoardgames)
-        return [ filteredGames[i]['board_game']['name'] for i in options ]
+        numberOfBoardgames = numberOfBoardgames if numberOfBoardgames > 0 else  3
+
+        if len(filteredGames) < numberOfBoardgames:
+            return filteredGames
+        else:
+            options = random.sample(range(0, len(filteredGames)), numberOfBoardgames)
+            return [ filteredGames[i] for i in options ]
 
     def getMostPlayedBoardgame(self):
         # Get stats
