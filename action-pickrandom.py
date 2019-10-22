@@ -43,7 +43,7 @@ class PickRandomBoardgame(object):
             return hermes.publish_continue_session(intent_message.session_id,
                                                     required_slots_questions["num_players"],
                                                     ["hjwk:ElicitNumPlayers"],
-                                                    custom_data=json.dumps(numberOfBoardgames))
+                                                    custom_data=str(numberOfBoardgames))
         hermes.publish_end_session(intent_message.session_id, "")
 
         boardgames = self.apiHandler.getRandomBoardgames(num_players_slot, numberOfBoardgames)
