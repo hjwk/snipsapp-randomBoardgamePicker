@@ -7,14 +7,9 @@ from hermes_python.hermes import Hermes
 from hermes_python.ontology.dialogue.intent import IntentMessage
 
 from api import Api
-
+from util import *
 
 CONFIG_INI = "config.ini"
-
-# if this skill is supposed to run on the satellite,
-# please get this mqtt connection info from <config.ini>
-#
-# hint: MQTT server is always running on the master device
 MQTT_IP_ADDR = "localhost"
 MQTT_PORT = 1883
 MQTT_ADDR = "{}:{}".format(MQTT_IP_ADDR, str(MQTT_PORT))
@@ -23,17 +18,7 @@ required_slots_questions = {
     "num_players": "Combien de joueurs ?",
 }
 
-def extractSlot(slots, slot):
-    if slots[slot]:
-        return int(slots[slot].first().value)
-
-    return None
-
 class PickRandomBoardgame(object):
-    """class used to wrap action code with mqtt connection
-       please change the name refering to your application
-    """
-
     def __init__(self):
         # get the configuration if needed
         try:
