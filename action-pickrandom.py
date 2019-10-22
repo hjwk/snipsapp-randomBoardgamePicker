@@ -36,14 +36,14 @@ class PickRandomBoardgame(object):
 
     def PickRandomBoardgameCallback(self, hermes: Hermes, intent_message: IntentMessage):
         num_players_slot = extractSlot(intent_message.slots, "numberOfPlayers")
-        if not num_players_slot:
-            return hermes.publish_continue_session(intent_message.session_id,
-                                                    required_slots_questions["num_players"],
-                                                    ["hjwk:ElicitNumPlayers"])
-
         num_boardgames_slot = extractSlot(intent_message.slots, "numberOfPropositions")
         numberOfBoardgames = num_boardgames_slot if num_boardgames_slot else self.numberOfBoardgames
 
+        if not num_players_slot:
+            return hermes.publish_continue_session(intent_message.session_id,
+                                                    required_slots_questions["num_players"],
+                                                    ["hjwk:ElicitNumPlayers"],
+                                                    custom_data=json.dumps(numberOfBoardgames))
         hermes.publish_end_session(intent_message.session_id, "")
 
         boardgames = self.apiHandler.getRandomBoardgames(num_players_slot, numberOfBoardgames)
@@ -63,7 +63,7 @@ class PickRandomBoardgame(object):
         hermes.publish_end_session(intent_message.session_id, "")
 
         num_players_slot = extractSlot(intent_message.slots, "numberOfPlayers")
-        boardgames = self.apiHandler.getRandomBoardgames(num_players_slot, self.numberOfBoardgames)
+        boardgames = self.apiHandler.getRandomBoardgames(num_players_slot, int(intent_message.custom_data))
         if len(boardgames) == 0:
             return hermes.publish_start_session_notification(intent_message.site_id, "Vous n'avez pas de jeu qui se joue à {}".format(num_players_slot), "")
 
