@@ -82,7 +82,7 @@ class PickRandomBoardgame(object):
     def PossessedBoardgames(self, hermes: Hermes, intent_message: IntentMessage):
         hermes.publish_end_session(intent_message.session_id, "")
         numberOfOwnedBoardgames = self.apiHandler.getNumberOfBoardgames()
-        hermes.publish_start_session_notification(intent_message.site_id, "Vous possédez " + str(numberOfOwnedBoardgames), "")
+        hermes.publish_start_session_notification(intent_message.site_id, "Vous possédez {} jeux de société".format(numberOfOwnedBoardgames), "")
 
     # register callback function to its intent and start listen to MQTT bus
     def start_blocking(self):
