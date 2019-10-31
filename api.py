@@ -39,6 +39,7 @@ class Api(object):
     def updateLibrary(self):
         if not self.boardgames:
             url = self.backend_url + '/user/current/library_games'
+
         library = self.authorizedGetRequest(url)
         if not library.ok:
             print("Token no longer valid, refreshing")
@@ -47,9 +48,19 @@ class Api(object):
 
         self.boardgames = library.json()
 
+    def updateBoardgamesInEvent(self):
+        url = self.backend_url + '/event/6/board_games'
+        boardgames = self.authorizedGetRequest(url)
+        if not boardgames.ok:
+            print("Token no longer valid, refreshing")
+            self.token = self.getToken()
+            boardgames = self.authorizedGetRequest(url)
+
+        self.boardgames = boardgames.json()
+
     def getRandomBoardgames(self, numberOfPlayers, numberOfBoardgames):
         # Get boardgames
-        self.updateLibrary()
+        self.updateBoardgamesInEvent()
 
         ## Filter according to number of players
         filteredGames = []

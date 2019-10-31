@@ -29,6 +29,9 @@ class PickRandomBoardgame(object):
             self.config = None
 
         self.numberOfBoardgames = 3
+        self.lastNumPlayers = 2
+        self.lastNumBoardgames = 3
+
         self.start_blocking()
 
     def GenerateBoardgamesAnswer(self, boardgames, num_players):
@@ -60,13 +63,25 @@ class PickRandomBoardgame(object):
 
         boardgames = self.apiHandler.getRandomBoardgames(num_players_slot, numberOfBoardgames)
         hermes.publish_start_session_notification(intent_message.site_id, self.GenerateBoardgamesAnswer(boardgames, num_players_slot), "")
+        self.lastNumBoardgames = numberOfBoardgames
+        self.lastNumPlayers = num_players_slot
 
     def ElicitNumPlayersCallback(self, hermes: Hermes, intent_message: IntentMessage):
         hermes.publish_end_session(intent_message.session_id, "")
 
-        num_players = extractSlot(intent_message.slots, "numberOfPlayers")
-        boardgames = self.apiHandler.getRandomBoardgames(num_players, int(intent_message.custom_data))    
-        hermes.publish_start_session_notification(intent_message.site_id, self.GenerateBoardgamesAnswer(boardgames, num_players), "")
+        numPlayers = extractSlot(intent_message.slots, "numberOfPlayers")
+        numberOfBoardgames = int(intent_message.custom_data)
+        boardgames = self.apiHandler.getRandomBoardgames(numPlayers, numberOfBoardgames)    
+        hermes.publish_start_session_notification(intent_message.site_id, self.GenerateBoardgamesAnswer(boardgames, numPlayers), "")
+        self.lastNumBoardgames = numberOfBoardgames
+        self.lastNumPlayers = numPlayers
+
+    def RepeatPickRandomCallback(self, hermes: Hermes, intent_message: IntentMessage):
+        hermes.publish_end_session(intent_message.session_id, "")
+
+        boardgames = self.apiHandler.getRandomBoardgames(self.lastNumPlayers, self.lastNumBoardgames)
+        answer = self.GenerateBoardgamesAnswer(boardgames, self.lastNumPlayers)
+        hermes.publish_start_session_notification(intent_message.site_id, answer, "")
 
     def FavouriteBoardgame(self, hermes: Hermes, intent_message: IntentMessage):
         hermes.publish_end_session(intent_message.session_id, "")
@@ -85,6 +100,7 @@ class PickRandomBoardgame(object):
             h.subscribe_intent('hjwk:ElicitNumPlayers', self.ElicitNumPlayersCallback)
             h.subscribe_intent('hjwk:FavouriteBoardgame', self.FavouriteBoardgame)
             h.subscribe_intent('hjwk:PossessedBoardgames', self.PossessedBoardgames)
+            h.subscribe_intent('hjwk:RepeatPickRandom', self.RepeatPickRandomCallback)
             h.loop_forever()
 
 if __name__ == "__main__":
