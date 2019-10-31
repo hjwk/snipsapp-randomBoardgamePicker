@@ -65,9 +65,9 @@ class Api(object):
         ## Filter according to number of players
         filteredGames = []
         for game in self.boardgames:
-            if (game['board_game']['min_players'] <= numberOfPlayers and
-                game['board_game']['max_players'] >= numberOfPlayers):
-                filteredGames.append(game['board_game']['name'])
+            if (game['provided_board_game']['min_players'] <= numberOfPlayers and
+                game['provided_board_game']['max_players'] >= numberOfPlayers):
+                filteredGames.append(game['provided_board_game']['name'])
 
         numberOfBoardgames = numberOfBoardgames if numberOfBoardgames > 0 else 3
 
